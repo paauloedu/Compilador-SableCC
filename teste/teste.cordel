@@ -1,0 +1,13 @@
+{
+*       Programa Calculo de média       *
+* Legenda: A - APROVADO / R - REPROVADO *
+*         Media da Escola: 5,5          *
+}
+
+arrume caractere assim: verifica (real media)
+inicio
+    se(media >= 5,5)
+        mande de volta 'A';
+    senao
+        mande de volta 'R';
+fim

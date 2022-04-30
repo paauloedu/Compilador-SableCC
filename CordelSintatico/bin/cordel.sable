@@ -1,0 +1,177 @@
+Package cordel;
+
+Helpers
+ digito = ['0' .. '9']; 
+ ascii = [0..255];
+ espaco = ' ';
+ rc = 13;
+ nl = 10;
+ tab = 9;
+ hashtag = 35;
+ negativo = 45;
+ aspas = 34;
+ letras = [['a' .. 'z'] + ['A' .. 'Z']];
+ nova_linha = [nl + rc];
+ not_rc_nl = [ascii - [nl + rc]];
+ boxcoment_esq = '{';
+ boxcoment_dir = '}';
+  
+Tokens 
+ num_inteiro = (negativo)?(digito)+;
+ num_real = (negativo)?(digito)+','(digito)+;
+ numero = digito+;
+ caractere = '''[not_rc_nl - ''' ]''';
+ pula_linha = ''' '\n' ''';
+ tabulacao = ''' '\t' ''';
+ string = aspas [not_rc_nl - aspas]+ aspas;
+ linha_coment = hashtag (not_rc_nl)*;
+ box_coment = boxcoment_esq [ascii - boxcoment_dir]* boxcoment_dir;
+ soma = '+';
+ subt = '-';
+ mult = '*';
+ div = '/';
+ atrib = ':=';
+ sep_param = '|';
+ par_esq = '(';
+ par_dir = ')';
+ col_esq = '[';
+ col_dir = ']';
+ menor = '<';
+ maior = '>';
+ igual = '=';
+ menor_ig = '<=';
+ maior_ig = '>=';
+ pt_virgula = ';';
+ dois_pt = ':';
+ virgula = ',';
+ int = 'inteiro';
+ float = 'real';
+ char = 'caractere';
+ bool = 'booleano';
+ nada = 'nada'; //add isso aq
+ or = 'ou';
+ not = '!';
+ and = 'e';
+ if = 'se';
+ else = 'senao';
+ for = 'arrodeie';
+ while = 'enquanto';
+ repeat = 'repita';
+ ruma = 'ruma';
+ de = 'de';
+ mande = 'mande';
+ volta = 'volta';
+ arrume = 'arrume';
+ assim = 'assim';
+ inicio = 'inicio';
+ fim = 'fim';
+ sim = 'sim';
+ nao = 'nao';
+ id = letras (letras |'_'| digito)*;
+ vazio = (espaco | rc | nl | tab)+;
+
+Ignored Tokens
+ vazio, linha_coment, box_coment;
+ 
+Productions
+ 
+ programa = dec_or_def*;
+ 
+ dec_or_def =
+   {dec_variavel} dec_variavel
+  |{dec_funcao} dec_funcao;
+ 
+ dec_variavel = 
+   tipo lista_nomes semicolon;
+   
+ tipo =
+   {tipo} tipo_base
+  |{vetor} ruma de tipo_base col_esq exp col_dir;
+  
+ tipo_base =
+   {int} int
+  |{caractere} char
+  |{float} float
+  |{bool} bool;
+  
+ exp =
+   {opcao} opcao
+  |{igual} exp igual opcao
+  |{menor_igual} exp menor_ig opcao
+  |{maior_igual} exp maior_ig opcao
+  |{menor} exp menor opcao
+  |{maior} exp maior opcao
+  |{negacao} not opcao
+  |{and} exp and opcao
+  |{or} exp or opcao;  
+ 
+ opcao =
+   {fator} fator
+  |{soma} opcao soma fator
+  |{sub} opcao subt fator;
+  
+ fator =
+   {termo} termo
+  |{mult} fator mult termo
+  |{div} fator div termo;
+  
+ termo =
+   {var} var
+  |{variavel} variavel
+  |{prioridade} par_esq exp par_dir
+  |{calling} chamada;
+ 
+ variavel =
+   {num_inteiro} num_inteiro
+  |{num_real} num_real
+  |{caractere} caractere
+  |{bool_sim} sim
+  |{bool_nao} nao
+  |{string} string;
+ 
+ dec_funcao = arrume tipo_retorno assim dois_pt id par_esq parametros par_dir bloco;
+  
+ tipo_retorno =
+   {tipo} tipo
+  |{nada} nada;
+   
+ bloco = inicio dec_variavel* comando* fim;
+ 
+ parametros = param?;
+ 
+ param = parametro param_aux*;
+ 
+ param_aux = sep_param parametro;
+   
+ parametro = tipo id;
+ 
+ semicolon = pt_virgula;
+ 
+ comando = 
+   {se} if par_esq exp par_dir comando
+  |{enquanto} while par_esq exp par_dir repeat comando
+  |{arrodeie} for par_esq [init]:lista_atrib [s1]:pt_virgula exp [s2]:pt_virgula [incr]:lista_atrib par_dir comando
+  |{mande_de_volta} mande de volta exp semicolon
+  |{atribuicao} atribuicao semicolon
+  |{bloco} bloco
+  |{chamada} chamada semicolon;
+ 
+ lista_nomes = id id_aux*;
+ id_aux = virgula id;
+ 
+ atribuicao = var atrib exp;
+ 
+ lista_atrib = atribuicao atrib_aux*;
+ 
+ atrib_aux = virgula atribuicao; 
+ 
+ var = 
+   {id} id
+  |{var_exp} var col_esq exp col_dir;
+  
+ chamada = id par_esq lista_exp? par_dir;
+ 
+ lista_exp = exp exp_aux*;
+  
+ exp_aux = sep_param exp; 
+ 
