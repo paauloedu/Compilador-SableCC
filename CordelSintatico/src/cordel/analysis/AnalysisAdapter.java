@@ -339,43 +339,91 @@ public class AnalysisAdapter implements Analysis
     }
 
     @Override
-    public void caseASeComando(ASeComando node)
+    public void caseAStatementComando(AStatementComando node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAEnquantoComando(AEnquantoComando node)
+    public void caseADirectStatementComando(ADirectStatementComando node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAArrodeieComando(AArrodeieComando node)
+    public void caseASeStatement(ASeStatement node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAMandeDeVoltaComando(AMandeDeVoltaComando node)
+    public void caseASeAbertoStatement(ASeAbertoStatement node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAAtribuicaoComando(AAtribuicaoComando node)
+    public void caseASeSenaoStatement(ASeSenaoStatement node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseABlocoComando(ABlocoComando node)
+    public void caseAEnquantoStatement(AEnquantoStatement node)
     {
         defaultCase(node);
     }
 
     @Override
-    public void caseAChamadaComando(AChamadaComando node)
+    public void caseAArrodeieStatement(AArrodeieStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseADirectStatement(ADirectStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseASeSenaoDirectDirectStatement(ASeSenaoDirectDirectStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAEnquantoDirectDirectStatement(AEnquantoDirectDirectStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAArrodeieDirectDirectStatement(AArrodeieDirectDirectStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAMandeDeVoltaBasicStatement(AMandeDeVoltaBasicStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAAtribuicaoBasicStatement(AAtribuicaoBasicStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseABlocoBasicStatement(ABlocoBasicStatement node)
+    {
+        defaultCase(node);
+    }
+
+    @Override
+    public void caseAChamadaBasicStatement(AChamadaBasicStatement node)
     {
         defaultCase(node);
     }
@@ -460,18 +508,6 @@ public class AnalysisAdapter implements Analysis
 
     @Override
     public void caseTCaractere(TCaractere node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseTPulaLinha(TPulaLinha node)
-    {
-        defaultCase(node);
-    }
-
-    @Override
-    public void caseTTabulacao(TTabulacao node)
     {
         defaultCase(node);
     }

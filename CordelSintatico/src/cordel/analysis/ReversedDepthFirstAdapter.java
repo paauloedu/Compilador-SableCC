@@ -1160,23 +1160,65 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         outASemicolon(node);
     }
 
-    public void inASeComando(ASeComando node)
+    public void inAStatementComando(AStatementComando node)
     {
         defaultIn(node);
     }
 
-    public void outASeComando(ASeComando node)
+    public void outAStatementComando(AStatementComando node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseASeComando(ASeComando node)
+    public void caseAStatementComando(AStatementComando node)
     {
-        inASeComando(node);
-        if(node.getComando() != null)
+        inAStatementComando(node);
+        if(node.getStatement() != null)
         {
-            node.getComando().apply(this);
+            node.getStatement().apply(this);
+        }
+        outAStatementComando(node);
+    }
+
+    public void inADirectStatementComando(ADirectStatementComando node)
+    {
+        defaultIn(node);
+    }
+
+    public void outADirectStatementComando(ADirectStatementComando node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseADirectStatementComando(ADirectStatementComando node)
+    {
+        inADirectStatementComando(node);
+        if(node.getDirectStatement() != null)
+        {
+            node.getDirectStatement().apply(this);
+        }
+        outADirectStatementComando(node);
+    }
+
+    public void inASeStatement(ASeStatement node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASeStatement(ASeStatement node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASeStatement(ASeStatement node)
+    {
+        inASeStatement(node);
+        if(node.getBasicStatement() != null)
+        {
+            node.getBasicStatement().apply(this);
         }
         if(node.getParDir() != null)
         {
@@ -1194,26 +1236,108 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getIf().apply(this);
         }
-        outASeComando(node);
+        outASeStatement(node);
     }
 
-    public void inAEnquantoComando(AEnquantoComando node)
+    public void inASeAbertoStatement(ASeAbertoStatement node)
     {
         defaultIn(node);
     }
 
-    public void outAEnquantoComando(AEnquantoComando node)
+    public void outASeAbertoStatement(ASeAbertoStatement node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAEnquantoComando(AEnquantoComando node)
+    public void caseASeAbertoStatement(ASeAbertoStatement node)
     {
-        inAEnquantoComando(node);
-        if(node.getComando() != null)
+        inASeAbertoStatement(node);
+        if(node.getStatement() != null)
         {
-            node.getComando().apply(this);
+            node.getStatement().apply(this);
+        }
+        if(node.getParDir() != null)
+        {
+            node.getParDir().apply(this);
+        }
+        if(node.getExp() != null)
+        {
+            node.getExp().apply(this);
+        }
+        if(node.getParEsq() != null)
+        {
+            node.getParEsq().apply(this);
+        }
+        if(node.getIf() != null)
+        {
+            node.getIf().apply(this);
+        }
+        outASeAbertoStatement(node);
+    }
+
+    public void inASeSenaoStatement(ASeSenaoStatement node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASeSenaoStatement(ASeSenaoStatement node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASeSenaoStatement(ASeSenaoStatement node)
+    {
+        inASeSenaoStatement(node);
+        if(node.getStatement() != null)
+        {
+            node.getStatement().apply(this);
+        }
+        if(node.getElse() != null)
+        {
+            node.getElse().apply(this);
+        }
+        if(node.getDirectStatement() != null)
+        {
+            node.getDirectStatement().apply(this);
+        }
+        if(node.getParDir() != null)
+        {
+            node.getParDir().apply(this);
+        }
+        if(node.getExp() != null)
+        {
+            node.getExp().apply(this);
+        }
+        if(node.getParEsq() != null)
+        {
+            node.getParEsq().apply(this);
+        }
+        if(node.getIf() != null)
+        {
+            node.getIf().apply(this);
+        }
+        outASeSenaoStatement(node);
+    }
+
+    public void inAEnquantoStatement(AEnquantoStatement node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEnquantoStatement(AEnquantoStatement node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEnquantoStatement(AEnquantoStatement node)
+    {
+        inAEnquantoStatement(node);
+        if(node.getStatement() != null)
+        {
+            node.getStatement().apply(this);
         }
         if(node.getRepeat() != null)
         {
@@ -1235,26 +1359,26 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getWhile().apply(this);
         }
-        outAEnquantoComando(node);
+        outAEnquantoStatement(node);
     }
 
-    public void inAArrodeieComando(AArrodeieComando node)
+    public void inAArrodeieStatement(AArrodeieStatement node)
     {
         defaultIn(node);
     }
 
-    public void outAArrodeieComando(AArrodeieComando node)
+    public void outAArrodeieStatement(AArrodeieStatement node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAArrodeieComando(AArrodeieComando node)
+    public void caseAArrodeieStatement(AArrodeieStatement node)
     {
-        inAArrodeieComando(node);
-        if(node.getComando() != null)
+        inAArrodeieStatement(node);
+        if(node.getStatement() != null)
         {
-            node.getComando().apply(this);
+            node.getStatement().apply(this);
         }
         if(node.getParDir() != null)
         {
@@ -1288,23 +1412,183 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getFor().apply(this);
         }
-        outAArrodeieComando(node);
+        outAArrodeieStatement(node);
     }
 
-    public void inAMandeDeVoltaComando(AMandeDeVoltaComando node)
+    public void inADirectStatement(ADirectStatement node)
     {
         defaultIn(node);
     }
 
-    public void outAMandeDeVoltaComando(AMandeDeVoltaComando node)
+    public void outADirectStatement(ADirectStatement node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAMandeDeVoltaComando(AMandeDeVoltaComando node)
+    public void caseADirectStatement(ADirectStatement node)
     {
-        inAMandeDeVoltaComando(node);
+        inADirectStatement(node);
+        if(node.getBasicStatement() != null)
+        {
+            node.getBasicStatement().apply(this);
+        }
+        outADirectStatement(node);
+    }
+
+    public void inASeSenaoDirectDirectStatement(ASeSenaoDirectDirectStatement node)
+    {
+        defaultIn(node);
+    }
+
+    public void outASeSenaoDirectDirectStatement(ASeSenaoDirectDirectStatement node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseASeSenaoDirectDirectStatement(ASeSenaoDirectDirectStatement node)
+    {
+        inASeSenaoDirectDirectStatement(node);
+        if(node.getRight() != null)
+        {
+            node.getRight().apply(this);
+        }
+        if(node.getElse() != null)
+        {
+            node.getElse().apply(this);
+        }
+        if(node.getLeft() != null)
+        {
+            node.getLeft().apply(this);
+        }
+        if(node.getParDir() != null)
+        {
+            node.getParDir().apply(this);
+        }
+        if(node.getExp() != null)
+        {
+            node.getExp().apply(this);
+        }
+        if(node.getParEsq() != null)
+        {
+            node.getParEsq().apply(this);
+        }
+        if(node.getIf() != null)
+        {
+            node.getIf().apply(this);
+        }
+        outASeSenaoDirectDirectStatement(node);
+    }
+
+    public void inAEnquantoDirectDirectStatement(AEnquantoDirectDirectStatement node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAEnquantoDirectDirectStatement(AEnquantoDirectDirectStatement node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAEnquantoDirectDirectStatement(AEnquantoDirectDirectStatement node)
+    {
+        inAEnquantoDirectDirectStatement(node);
+        if(node.getDirectStatement() != null)
+        {
+            node.getDirectStatement().apply(this);
+        }
+        if(node.getRepeat() != null)
+        {
+            node.getRepeat().apply(this);
+        }
+        if(node.getParDir() != null)
+        {
+            node.getParDir().apply(this);
+        }
+        if(node.getExp() != null)
+        {
+            node.getExp().apply(this);
+        }
+        if(node.getParEsq() != null)
+        {
+            node.getParEsq().apply(this);
+        }
+        if(node.getWhile() != null)
+        {
+            node.getWhile().apply(this);
+        }
+        outAEnquantoDirectDirectStatement(node);
+    }
+
+    public void inAArrodeieDirectDirectStatement(AArrodeieDirectDirectStatement node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAArrodeieDirectDirectStatement(AArrodeieDirectDirectStatement node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAArrodeieDirectDirectStatement(AArrodeieDirectDirectStatement node)
+    {
+        inAArrodeieDirectDirectStatement(node);
+        if(node.getDirectStatement() != null)
+        {
+            node.getDirectStatement().apply(this);
+        }
+        if(node.getParDir() != null)
+        {
+            node.getParDir().apply(this);
+        }
+        if(node.getIncr() != null)
+        {
+            node.getIncr().apply(this);
+        }
+        if(node.getS2() != null)
+        {
+            node.getS2().apply(this);
+        }
+        if(node.getExp() != null)
+        {
+            node.getExp().apply(this);
+        }
+        if(node.getS1() != null)
+        {
+            node.getS1().apply(this);
+        }
+        if(node.getInit() != null)
+        {
+            node.getInit().apply(this);
+        }
+        if(node.getParEsq() != null)
+        {
+            node.getParEsq().apply(this);
+        }
+        if(node.getFor() != null)
+        {
+            node.getFor().apply(this);
+        }
+        outAArrodeieDirectDirectStatement(node);
+    }
+
+    public void inAMandeDeVoltaBasicStatement(AMandeDeVoltaBasicStatement node)
+    {
+        defaultIn(node);
+    }
+
+    public void outAMandeDeVoltaBasicStatement(AMandeDeVoltaBasicStatement node)
+    {
+        defaultOut(node);
+    }
+
+    @Override
+    public void caseAMandeDeVoltaBasicStatement(AMandeDeVoltaBasicStatement node)
+    {
+        inAMandeDeVoltaBasicStatement(node);
         if(node.getSemicolon() != null)
         {
             node.getSemicolon().apply(this);
@@ -1325,23 +1609,23 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getMande().apply(this);
         }
-        outAMandeDeVoltaComando(node);
+        outAMandeDeVoltaBasicStatement(node);
     }
 
-    public void inAAtribuicaoComando(AAtribuicaoComando node)
+    public void inAAtribuicaoBasicStatement(AAtribuicaoBasicStatement node)
     {
         defaultIn(node);
     }
 
-    public void outAAtribuicaoComando(AAtribuicaoComando node)
+    public void outAAtribuicaoBasicStatement(AAtribuicaoBasicStatement node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAAtribuicaoComando(AAtribuicaoComando node)
+    public void caseAAtribuicaoBasicStatement(AAtribuicaoBasicStatement node)
     {
-        inAAtribuicaoComando(node);
+        inAAtribuicaoBasicStatement(node);
         if(node.getSemicolon() != null)
         {
             node.getSemicolon().apply(this);
@@ -1350,44 +1634,44 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getAtribuicao().apply(this);
         }
-        outAAtribuicaoComando(node);
+        outAAtribuicaoBasicStatement(node);
     }
 
-    public void inABlocoComando(ABlocoComando node)
+    public void inABlocoBasicStatement(ABlocoBasicStatement node)
     {
         defaultIn(node);
     }
 
-    public void outABlocoComando(ABlocoComando node)
+    public void outABlocoBasicStatement(ABlocoBasicStatement node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseABlocoComando(ABlocoComando node)
+    public void caseABlocoBasicStatement(ABlocoBasicStatement node)
     {
-        inABlocoComando(node);
+        inABlocoBasicStatement(node);
         if(node.getBloco() != null)
         {
             node.getBloco().apply(this);
         }
-        outABlocoComando(node);
+        outABlocoBasicStatement(node);
     }
 
-    public void inAChamadaComando(AChamadaComando node)
+    public void inAChamadaBasicStatement(AChamadaBasicStatement node)
     {
         defaultIn(node);
     }
 
-    public void outAChamadaComando(AChamadaComando node)
+    public void outAChamadaBasicStatement(AChamadaBasicStatement node)
     {
         defaultOut(node);
     }
 
     @Override
-    public void caseAChamadaComando(AChamadaComando node)
+    public void caseAChamadaBasicStatement(AChamadaBasicStatement node)
     {
-        inAChamadaComando(node);
+        inAChamadaBasicStatement(node);
         if(node.getSemicolon() != null)
         {
             node.getSemicolon().apply(this);
@@ -1396,7 +1680,7 @@ public class ReversedDepthFirstAdapter extends AnalysisAdapter
         {
             node.getChamada().apply(this);
         }
-        outAChamadaComando(node);
+        outAChamadaBasicStatement(node);
     }
 
     public void inAListaNomes(AListaNomes node)
