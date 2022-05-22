@@ -4,46 +4,9 @@
 *         Media da Escola: 5,5          *
 }
 
+ruma de inteiro [x] vasco;
+inteiro vasco, x, y, z;
 arrume caractere assim: verifica (real media)
 inicio
-    se(media >= 5,5)
-        mande de volta 'A';
-    senao
-        mande de volta 'R';
-fim
-
-arrume nada assim: principal()
-inicio 
-    real nota_1, nota_2, media;
-    booleano i;
-    caractere ch;
-    media := 0;
-    i := sim;    
-
-    enquanto (i) repita
-    inicio
-        #amostre ("Digite a primeira nota:");
-        nota_1 := x;
-
-        #amostre ("Digite a segunda nota:");
-        nota_2 := y;
-
-        se( nota_1<0 ou nota_1>10 )
-        inicio
-           #amostre ("ERROR DETECTADO-Somente numeros positivos\n");
-           mande de volta 0;
-        fim 
-
-        se( nota_2<0 ou nota_2>10 )
-        inicio
-           #amostre ("ERROR DETECTADO-Somente numeros positivos\n");
-           mande de volta 0;
-        fim
-
-        i := !i;
-    fim
-    media := ( nota_1 + nota_2 ) / 2;
-    #amostre(media);
-    ch := verifica(media);
-    #amostre(ch);
+    vasco();
 fim

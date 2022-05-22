@@ -46,7 +46,7 @@ Tokens
  float = 'real';
  char = 'caractere';
  bool = 'booleano';
- nada = 'nada'; //add isso aq
+ nada = 'nada'; 
  or = 'ou';
  not = '!';
  and = 'e';
@@ -73,117 +73,177 @@ Ignored Tokens
  
 Productions
  
- programa = dec_or_def*;
+ programa {-> a_programa} = 
+    [declara_var]:dec_variavel* [declara_func]:dec_funcao* {-> New a_programa.ar_programa([declara_var.a_dec_variavel], [declara_func.a_dec_funcao])};
  
- dec_or_def =
-   {dec_variavel} dec_variavel
-  |{dec_funcao} dec_funcao;
+ dec_variavel {-> a_dec_variavel} = 
+   tipo identificador id_aux* pt_virgula {-> New a_dec_variavel.ar_dec_variavel(tipo.a_tipo, [identificador.a_exp, id_aux.a_exp])}; 
  
- dec_variavel = 
-   tipo lista_nomes semicolon;
+ id_aux {-> a_exp}= virgula identificador {-> identificador.a_exp}; 
+ 
+ tipo {-> a_tipo} =
+   {tipo} tipo_base {-> tipo_base.a_tipo}
+  |{vetor} ruma de [esq]:tipo_base col_esq [dir]:exp col_dir {-> New a_tipo.ar_vetor(esq.a_tipo, dir.a_exp)};
+  
+ tipo_base {-> a_tipo} =
+   {int} int {-> New a_tipo.ar_inteiro(int)}
+  |{caractere} char {-> New a_tipo.ar_caractere(char)}
+  |{float} float {-> New a_tipo.ar_float(float)}
+  |{bool} bool {-> New a_tipo.ar_bool(bool)};
+  
+ exp {-> a_exp} =
+   {opcao} opcao {-> opcao.a_exp}
+  |{igual} exp igual opcao {-> New a_exp.a_igual(exp.a_exp, opcao.a_exp)}
+  |{menor_igual} exp menor_ig opcao {-> New a_exp.a_menor_igual(exp.a_exp, opcao.a_exp)}
+  |{maior_igual} exp maior_ig opcao {-> New a_exp.a_maior_igual(exp.a_exp, opcao.a_exp)}
+  |{menor} exp menor opcao {-> New a_exp.a_menor(exp.a_exp, opcao.a_exp)}
+  |{maior} exp maior opcao {-> New a_exp.a_maior(exp.a_exp, opcao.a_exp)}
+  |{negacao} not opcao {-> New a_exp.a_negacao(opcao.a_exp)}
+  |{and} exp and opcao {-> New a_exp.a_and(exp.a_exp, opcao.a_exp)}
+  |{or} exp or opcao  {-> New a_exp.a_or(exp.a_exp, opcao.a_exp)};
+ 
+ opcao {-> a_exp} =
+   {fator} fator {-> fator.a_exp}
+  |{soma} [esq]:opcao soma [dir]:fator {-> New a_exp.a_soma(esq.a_exp, dir.a_exp)}
+  |{sub} [esq]:opcao subt [dir]:fator {-> New a_exp.a_sub(esq.a_exp, dir.a_exp)};
+  
+ fator {-> a_exp} =
+   {termo} termo {-> termo.a_exp}
+  |{mult} [esq]:fator mult [dir]:termo {-> New a_exp.a_mult(esq.a_exp, dir.a_exp)}
+  |{div} [esq]:fator div [dir]:termo {-> New a_exp.a_div(esq.a_exp, dir.a_exp)};
+  
+ termo {-> a_exp} =
+   {var} var {-> var.a_exp} 
+  |{variavel} variavel {-> variavel.a_exp}
+  |{prioridade} par_esq exp par_dir {-> exp.a_exp}
+  |{chamada} chamada {-> chamada.a_exp};
+ 
+ variavel {-> a_exp} =
+   {num_inteiro} num_inteiro {-> New a_exp.a_num_inteiro(num_inteiro)}
+  |{num_real} num_real {-> New a_exp.a_num_real(num_real)}
+  |{caractere} caractere {-> New a_exp.a_caractere(caractere)}
+  |{bool_sim} sim {-> New a_exp.a_sim(sim)}
+  |{bool_nao} nao {-> New a_exp.a_nao(nao)}
+  |{string} string {-> New a_exp.a_string(string)};
+ 
+ dec_funcao {-> a_dec_funcao} = 
+    arrume [esq]:tipo_retorno assim dois_pt [left]:identificador par_esq [mid]:parametros par_dir [dir]:bloco 
+    {-> New a_dec_funcao.ar_dec_funcao(esq.a_tipo, left.a_exp, [mid.a_parametros], dir.a_bloco)};
+  
+ tipo_retorno {-> a_tipo} =
+   {tipo} tipo {-> tipo.a_tipo}
+  |{nada} nada {-> New a_tipo.a_nada(nada)};
    
- tipo =
-   {tipo} tipo_base
-  |{vetor} ruma de tipo_base col_esq exp col_dir;
-  
- tipo_base =
-   {int} int
-  |{caractere} char
-  |{float} float
-  |{bool} bool;
-  
- exp =
-   {opcao} opcao
-  |{igual} exp igual opcao
-  |{menor_igual} exp menor_ig opcao
-  |{maior_igual} exp maior_ig opcao
-  |{menor} exp menor opcao
-  |{maior} exp maior opcao
-  |{negacao} not opcao
-  |{and} exp and opcao
-  |{or} exp or opcao;  
+ bloco {-> a_bloco} = inicio dec_variavel* comando* fim {-> New a_bloco.ar_bloco([dec_variavel.a_dec_variavel], [comando.a_comando])};
  
- opcao =
-   {fator} fator
-  |{soma} opcao soma fator
-  |{sub} opcao subt fator;
-  
- fator =
-   {termo} termo
-  |{mult} fator mult termo
-  |{div} fator div termo;
-  
- termo =
-   {var} var
-  |{variavel} variavel
-  |{prioridade} par_esq exp par_dir
-  |{calling} chamada;
+ parametros {-> a_parametros*} = param? {-> [param.a_parametros]}; 
  
- variavel =
-   {num_inteiro} num_inteiro
-  |{num_real} num_real
-  |{caractere} caractere
-  |{bool_sim} sim
-  |{bool_nao} nao
-  |{string} string;
+ param {-> a_parametros*} = parametro param_aux* {-> [parametro.a_parametros, param_aux.a_parametros]};   
  
- dec_funcao = arrume tipo_retorno assim dois_pt id par_esq parametros par_dir bloco;
+ param_aux {-> a_parametros*} = sep_param parametro {-> [parametro.a_parametros]}; 
+ 
+ parametro {-> a_parametros} = [esq]:tipo [dir]:identificador {-> New a_parametros.ar_parametros(esq.a_tipo, dir.a_exp)};
+ 
+ comando {-> a_comando} = 
+   {statement} statement {-> statement.a_comando}
+  |{direct_statement} direct_statement {-> direct_statement.a_comando};
   
- tipo_retorno =
-   {tipo} tipo
-  |{nada} nada;
+ statement {-> a_comando} =  
+   {se} if par_esq [esq]:exp par_dir [dir]:basic_statement {-> New a_comando.a_se(esq.a_exp, dir.a_comando)}
+  |{se_aberto} if par_esq [esq]:exp par_dir [dir]:statement {-> New a_comando.a_se_aberto(esq.a_exp, dir.a_comando)}
+  |{se_senao} if par_esq [esq]:exp par_dir [mid]:direct_statement else [dir]:statement {-> New a_comando.a_se_senao(esq.a_exp, mid.a_comando, dir.a_comando)}
+  |{enquanto} while par_esq [esq]:exp par_dir repeat [dir]:statement {-> New a_comando.a_enquanto(esq.a_exp, dir.a_comando)}
+  |{arrodeie} for par_esq [init]:lista_atrib [s1]:pt_virgula [mid]:exp [s2]:pt_virgula [incr]:lista_atrib par_dir [dir]:statement {-> New a_comando.a_arrodeie(init.a_atrib, mid.a_exp, incr.a_atrib, dir.a_comando)};
+  
+ direct_statement {-> a_comando} =
+   basic_statement {-> basic_statement.a_comando}
+  |{se_senao_direct} if par_esq [esq]:exp par_dir [left]:direct_statement else [right]:direct_statement {-> New a_comando.a_se_senao_direct(esq.a_exp, left.a_comando, right.a_comando)}
+  |{enquanto_direct} while par_esq [esq]:exp par_dir repeat [dir]:direct_statement {-> New a_comando.a_enquanto_direct(esq.a_exp, dir.a_comando)}
+  |{arrodeie_direct} for par_esq [init]:lista_atrib [s1]:pt_virgula [mid]:exp [s2]:pt_virgula [incr]:lista_atrib par_dir [dir]:direct_statement {-> New a_comando.a_arrodeie_direct(init.a_atrib, mid.a_exp, incr.a_atrib, dir.a_comando)};
+  
+ basic_statement {-> a_comando} =
+   {mande_de_volta} mande de volta [mid]:exp pt_virgula {-> New a_comando.a_return(mid.a_exp)}
+  |{atribuicao} atribuicao pt_virgula {-> New a_comando.a_atribuicao(atribuicao.a_atrib)}
+  |{bloco} bloco {-> New a_comando.ar_bloco(bloco.a_bloco)}
+  |{chamada} chamada pt_virgula {-> New a_comando.ar_chamada(chamada.a_exp)};
    
- bloco = inicio dec_variavel* comando* fim;
+ atribuicao {-> a_atrib} = [esq]:var atrib [dir]:exp {-> New a_atrib.ar_atribuicao(esq.a_exp, dir.a_exp)};
  
- parametros = param?;
+ lista_atrib {-> a_atrib} = [esq]:atribuicao [dir]:atrib_aux* {-> New a_atrib.a_lista_atrib([esq.a_atrib, dir.a_atrib])} ;
  
- param = parametro param_aux*;
+ atrib_aux {-> a_atrib} = virgula atribuicao {-> atribuicao.a_atrib} ; 
  
- param_aux = sep_param parametro;
-   
- parametro = tipo id;
+ var {-> a_exp} = 
+   {id} identificador {-> identificador.a_exp}
+  |{var_exp} [esq]:var col_esq [dir]:exp col_dir {-> New a_exp.a_var_exp(esq.a_exp, dir.a_exp)};
  
- semicolon = pt_virgula;
+ chamada {-> a_exp} = [esq]:identificador par_esq [dir]:lista_exp? par_dir {-> New a_exp.a_chamada(esq.a_exp, [dir.a_exp])};
  
- comando = 
-   {statement} statement
-  |{direct_statement} direct_statement;
+ lista_exp {-> a_exp} = [esq]:exp [dir]:exp_aux* {-> New a_exp.a_lista_exp([esq.a_exp, dir.a_exp])};
   
- statement =  
-   {se} if par_esq exp par_dir basic_statement
-  |{se_aberto} if par_esq exp par_dir statement
-  |{se_senao} if par_esq exp par_dir direct_statement else statement
-  |{enquanto} while par_esq exp par_dir repeat statement
-  |{arrodeie} for par_esq [init]:lista_atrib [s1]:pt_virgula exp [s2]:pt_virgula [incr]:lista_atrib par_dir statement;
-  
- direct_statement =
-   basic_statement
-  |{se_senao_direct} if par_esq exp par_dir [left]:direct_statement else [right]:direct_statement
-  |{enquanto_direct} while par_esq exp par_dir repeat direct_statement
-  |{arrodeie_direct} for par_esq [init]:lista_atrib [s1]:pt_virgula exp [s2]:pt_virgula [incr]:lista_atrib par_dir direct_statement;
-  
- basic_statement =
-   {mande_de_volta} mande de volta exp semicolon
-  |{atribuicao} atribuicao semicolon
-  |{bloco} bloco
-  |{chamada} chamada semicolon;
+ exp_aux {-> a_exp} = sep_param exp {-> exp.a_exp}; 
  
- lista_nomes = id id_aux*;
- id_aux = virgula id;
+ identificador {-> a_exp} = id {-> New a_exp.a_id(id)};
  
- atribuicao = var atrib exp;
+Abstract Syntax Tree
+
+ a_programa = {ar_programa} [declara_var]:a_dec_variavel* [declara_func]:a_dec_funcao*;  
  
- lista_atrib = atribuicao atrib_aux*;
+ a_dec_variavel = {ar_dec_variavel} a_tipo [identificadores]:a_exp+; 
  
- atrib_aux = virgula atribuicao; 
+ a_dec_funcao = {ar_dec_funcao} [esq]:a_tipo [left]:a_exp [mid]:a_parametros* [dir]:a_bloco; 
  
- var = 
-   {id} id
-  |{var_exp} var col_esq exp col_dir;
-  
- chamada = id par_esq lista_exp? par_dir;
+ a_parametros = {ar_parametros} [esq]:a_tipo [dir]:a_exp; 				
  
- lista_exp = exp exp_aux*;
-  
- exp_aux = sep_param exp; 
+ a_bloco = {ar_bloco} [dec_variavel]:a_dec_variavel* [comando]:a_comando*;
+ 
+ a_tipo = {ar_inteiro} int
+         |{ar_caractere} char
+         |{ar_float} float
+         |{ar_bool} bool
+         |{a_nada} nada
+         |{ar_vetor} [esq]:a_tipo [dir]:a_exp; 
+
+ 
+ a_exp =  {a_igual} [esq]:a_exp [dir]:a_exp
+		 |{a_menor_igual} [esq]:a_exp [dir]:a_exp 
+		 |{a_maior_igual} [esq]:a_exp [dir]:a_exp 
+		 |{a_menor} [esq]:a_exp [dir]:a_exp 
+		 |{a_maior} [esq]:a_exp [dir]:a_exp
+	  	 |{a_negacao} a_exp
+		 |{a_and} [esq]:a_exp [dir]:a_exp
+		 |{a_or} [esq]:a_exp [dir]:a_exp
+ 		 |{a_soma} [esq]:a_exp [dir]:a_exp
+ 		 |{a_sub} [esq]:a_exp [dir]:a_exp
+ 		 |{a_mult} [esq]:a_exp [dir]:a_exp
+ 		 |{a_div} [esq]:a_exp [dir]:a_exp
+	     |{a_menos} [esq]:a_exp [dir]:a_exp
+	     |{a_num_inteiro} num_inteiro
+	     |{a_num_real} num_real
+	     |{a_caractere} caractere
+	     |{a_sim} sim
+	     |{a_nao} nao
+	     |{a_string} string
+	     |{a_variavel} a_exp
+	     |{a_id} id
+	     |{a_var_exp} [esq]:a_exp [dir]:a_exp
+	     |{a_chamada} [esq]:a_exp [dir]:a_exp* /* mapeamento do id*/
+	     |{a_lista_exp} [lista]:a_exp*;
+	     
+a_comando = {a_se} [esq]:a_exp [dir]:a_comando
+	       |{a_se_aberto} [esq]:a_exp [dir]:a_comando
+	  	   |{a_se_senao} [esq]:a_exp [mid]:a_comando [dir]:a_comando
+	       |{a_enquanto} [esq]:a_exp [dir]:a_comando
+	       |{a_arrodeie} [init]:a_atrib [mid]:a_exp [incr]:a_atrib [dir]:a_comando
+	       |{a_se_senao_direct} [esq]:a_exp [left]:a_comando [right]:a_comando
+	       |{a_enquanto_direct} [esq]:a_exp [dir]:a_comando
+	       |{a_arrodeie_direct} [init]:a_atrib [mid]:a_exp [incr]:a_atrib [dir]:a_comando
+	       |{a_return} a_exp
+	       |{a_atribuicao} a_atrib
+	       |{ar_bloco} [bloco]:a_bloco
+	       |{ar_chamada} [chamada]:a_exp;
+	     
+ a_atrib = {ar_atribuicao} [esq]:a_exp [dir]:a_exp
+          |{a_lista_atrib} [atribuicoes]:a_atrib* ;
+ 
  
